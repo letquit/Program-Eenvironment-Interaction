@@ -15,6 +15,10 @@ public class CameraFollow : MonoBehaviour
     
     private Vector3 targetPosition;
 
+    /// <summary>
+    /// 初始化相机跟随系统
+    /// 在游戏开始时查找目标对象并设置初始相机位置
+    /// </summary>
     private void Start()
     {
         if (target == null)
@@ -36,6 +40,10 @@ public class CameraFollow : MonoBehaviour
         transform.position = targetPosition;
     }
 
+    /// <summary>
+    /// 每帧更新相机位置，确保在目标移动后执行以获得最新位置
+    /// 根据设置决定是否使用平滑跟随，并使相机始终看向目标
+    /// </summary>
     private void LateUpdate()
     {
         if (target != null)
@@ -59,3 +67,4 @@ public class CameraFollow : MonoBehaviour
         }
     }
 }
+

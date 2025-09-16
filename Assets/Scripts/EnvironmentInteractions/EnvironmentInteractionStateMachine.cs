@@ -47,6 +47,10 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private CapsuleCollider _rootCollider;
 
+    /// <summary>
+    /// 在Unity编辑器中选中该对象时绘制辅助Gizmos，用于可视化调试
+    /// 绘制一个红色球体表示从肩膀到最近碰撞点的位置
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -106,6 +110,10 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
         CurrentState = States[EEnvironmentInteractionState.Reset];
     }
 
+    /// <summary>
+    /// 构造用于检测环境交互的触发器碰撞体（BoxCollider）
+    /// 根据角色根部碰撞体尺寸创建一个包围盒作为探测区域
+    /// </summary>
     private void ConstructEnvironmentDetectionCollider()
     {
         float wingspan = _rootCollider.height;
@@ -115,6 +123,7 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
         boxCollider.center = new Vector3(_rootCollider.center.x, _rootCollider.center.y + (0.25f * wingspan),
             _rootCollider.center.z + (0.5f * wingspan));
         boxCollider.isTrigger = true;
+        _context.ColliderCenterY = _rootCollider.center.y;
     }
 }
 

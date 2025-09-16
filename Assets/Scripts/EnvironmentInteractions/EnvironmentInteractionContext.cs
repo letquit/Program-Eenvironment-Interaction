@@ -6,6 +6,9 @@ using UnityEngine.Animations.Rigging;
 /// </summary>
 public class EnvironmentInteractionContext
 {
+    /// <summary>
+    /// 身体侧别枚举，表示左手或右手
+    /// </summary>
     public enum EBodySide
     {
         RIGHT,
@@ -21,6 +24,8 @@ public class EnvironmentInteractionContext
     private Rigidbody _rigidbody;
     private CapsuleCollider _rootCollider;
     private Transform _rootTransform;
+    private Vector3 _leftOriginalTargetPosition;
+    private Vector3 _rightOriginalTargetPosition;
 
     /// <summary>
     /// 初始化环境交互上下文实例
@@ -48,9 +53,13 @@ public class EnvironmentInteractionContext
         _rigidbody = rigidbody;
         _rootCollider = rootCollider;
         _rootTransform = rootTransform;
+        _leftOriginalTargetPosition = _leftIkConstraint.data.target.transform.localPosition;
+        _rightOriginalTargetPosition = _rightIkConstraint.data.target.transform.localPosition;
+        OriginalTargetRotation = _leftIkConstraint.data.target.rotation;
 
         // 初始化角色肩膀高度
         CharacterShoulderHight = leftIkConstraint.data.root.transform.position.y;
+        SetCurrentSide(Vector3.positiveInfinity);
     }
     
     /// <summary>
@@ -88,20 +97,75 @@ public class EnvironmentInteractionContext
     /// </summary>
     public Transform RootTransform => _rootTransform;
 
-    // 添加缺失的属性
     /// <summary>
     /// 获取角色肩膀高度
     /// </summary>
     public float CharacterShoulderHight { get; private set; }
 
+    /// <summary>
+    /// 当前相交的碰撞体
+    /// </summary>
     public Collider CurrentIntersectingCollider { get; set; }
-    public TwoBoneIKConstraint CurrentIkConstraint { get; private set; }
-    public MultiRotationConstraint CurrentMultiRotationConstraint { get; private set; }
-    public Transform CurrentIkTargetTransform { get; private set; }
-    public Transform CurrentShoulderTransform { get; private set; }
-    public EBodySide CurrentBodySide { get; private set; }
-    public Vector3 ClosestPointOnColliderFromShoulder { get; set; } = Vector3.positiveInfinity;
 
+    /// <summary>
+    /// 当前使用的IK约束组件（根据最近侧别动态设置）
+    /// </summary>
+    public TwoBoneIKConstraint CurrentIkConstraint { get; private set; }
+
+    /// <summary>
+    /// 当前使用的多旋转约束组件（根据最近侧别动态设置）
+    /// </summary>
+    public MultiRotationConstraint CurrentMultiRotationConstraint { get; private set; }
+
+    /// <summary>
+    /// 当前IK目标变换组件
+    /// </summary>
+    public Transform CurrentIkTargetTransform { get; private set; }
+
+    /// <summary>
+    /// 当前肩膀变换组件
+    /// </summary>
+    public Transform CurrentShoulderTransform { get; private set; }
+
+    /// <summary>
+    /// 当前身体侧别（左或右）
+    /// </summary>
+    public EBodySide CurrentBodySide { get; private set; }
+
+    /// <summary>
+    /// 从肩膀到碰撞体上的最近点位置
+    /// </summary>
+    public Vector3 ClosestPointOnColliderFromShoulder { get; set; } = Vector3.positiveInfinity; 
+
+    /// <summary>
+    /// 交互点Y轴偏移量
+    /// </summary>
+    public float InteractionPointYOffset { get; set; } = 0.0f;
+
+    /// <summary>
+    /// 碰撞体中心Y坐标
+    /// </summary>
+    public float ColliderCenterY { get; set; }
+
+    /// <summary>
+    /// 当前IK目标的原始局部位置
+    /// </summary>
+    public Vector3 CurrentOriginalTargetPosition { get; private set; }
+
+    /// <summary>
+    /// IK目标的初始旋转
+    /// </summary>
+    public Quaternion OriginalTargetRotation { get; private set; }
+
+    /// <summary>
+    /// 最近距离值，用于判断是否更新交互点
+    /// </summary>
+    public float LowestDistance { get; set; } = Mathf.Infinity;
+    
+    /// <summary>
+    /// 根据指定位置确定当前应使用哪一侧的身体进行交互，并更新相关引用
+    /// </summary>
+    /// <param name="positionToCheck">需要比较距离的目标位置</param>
     public void SetCurrentSide(Vector3 positionToCheck)
     {
         Vector3 leftShoulder = _leftIkConstraint.data.root.transform.position;
@@ -114,6 +178,7 @@ public class EnvironmentInteractionContext
             CurrentBodySide = EBodySide.LEFT;
             CurrentIkConstraint = _leftIkConstraint;
             CurrentMultiRotationConstraint = _leftMultiRotationConstraint;
+            CurrentOriginalTargetPosition = _leftOriginalTargetPosition;
         }
         else
         {
@@ -121,6 +186,7 @@ public class EnvironmentInteractionContext
             CurrentBodySide = EBodySide.RIGHT;
             CurrentIkConstraint = _rightIkConstraint;
             CurrentMultiRotationConstraint = _rightMultiRotationConstraint;
+            CurrentOriginalTargetPosition = _rightOriginalTargetPosition;
         }
 
         CurrentShoulderTransform = CurrentIkConstraint.data.root.transform;
