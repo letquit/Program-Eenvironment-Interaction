@@ -5,7 +5,6 @@ public class RiseState : EnvironmentInteractionState
     public RiseState(EnvironmentInteractionContext context,
         EnvironmentInteractionStateMachine.EEnvironmentInteractionState estate) : base(context, estate)
     {
-        EnvironmentInteractionContext Context = context;
     }
 
     public override void EnterState()
@@ -25,21 +24,21 @@ public class RiseState : EnvironmentInteractionState
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Rise;
+        return StateKey;
     }
 
     public override void OnTriggerEnter(Collider other)
     {
-        
+        StartIkTargetPositionTracking(other);
     }
 
     public override void OnTriggerStay(Collider other)
     {
-        
+        UpdateIkTargetPosition(other);
     }
 
     public override void OnTriggerExit(Collider other)
     {
-        
+        ResetIkTargetPositionTracking(other);
     }
 }

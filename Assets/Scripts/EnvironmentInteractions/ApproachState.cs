@@ -25,7 +25,7 @@ public class ApproachState : EnvironmentInteractionState
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Approach;
+        return StateKey;
     }
 
     public override void OnTriggerEnter(Collider other)

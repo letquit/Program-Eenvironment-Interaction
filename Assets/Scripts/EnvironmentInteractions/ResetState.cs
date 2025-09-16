@@ -10,7 +10,6 @@ public class ResetState : EnvironmentInteractionState
 
     public override void EnterState()
     {
-        Debug.Log("ENTERING RESET STATE");
     }
 
     public override void ExitState()
@@ -20,13 +19,12 @@ public class ResetState : EnvironmentInteractionState
 
     public override void UpdateState()
     {
-        
-        Debug.Log("UPDATING RESET STATE");
     }
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Reset;
+        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Search;
+        // return StateKey;
     }
 
     public override void OnTriggerEnter(Collider other)

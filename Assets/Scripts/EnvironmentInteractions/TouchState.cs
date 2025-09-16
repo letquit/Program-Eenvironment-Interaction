@@ -25,7 +25,7 @@ public class TouchState : EnvironmentInteractionState
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Touch;
+        return StateKey;
     }
 
     public override void OnTriggerEnter(Collider other)

@@ -23,5 +23,55 @@ public abstract class EnvironmentInteractionState : BaseState<EnvironmentInterac
     {
         Context = context;
     }
+
+    private Vector3 GetClosestPointOnCollider(Collider intersectingCollider, Vector3 positionToCheck)
+    {
+        return intersectingCollider.ClosestPoint(positionToCheck);
+    }
+
+    protected void StartIkTargetPositionTracking(Collider intersectingCollider)
+    {
+        // 使用可交互层俩过滤目标对象且确保程序动画启动后不会切换到其它碰撞体并重置该值
+        if (intersectingCollider.gameObject.layer == LayerMask.NameToLayer("Interactable") &&
+            Context.CurrentIntersectingCollider == null)
+        {
+            Context.CurrentIntersectingCollider = intersectingCollider;
+            Vector3 closestPointFromRoot = GetClosestPointOnCollider(intersectingCollider, Context.RootTransform.position);
+            Context.SetCurrentSide(closestPointFromRoot);
+            
+            SetIkTargetPosition();
+        }
+    }
+    
+    protected void UpdateIkTargetPosition(Collider intersectingCollider)
+    {
+        if (intersectingCollider == Context.CurrentIntersectingCollider)
+        {
+            SetIkTargetPosition();
+        }
+    }
+    
+    protected void ResetIkTargetPositionTracking(Collider intersectingCollider)
+    {
+        if (intersectingCollider == Context.CurrentIntersectingCollider)
+        {
+            Context.CurrentIntersectingCollider = null;
+            Context.ClosestPointOnColliderFromShoulder = Vector3.positiveInfinity;
+        }
+    }
+
+    private void SetIkTargetPosition()
+    {
+        Context.ClosestPointOnColliderFromShoulder = GetClosestPointOnCollider(Context.CurrentIntersectingCollider,
+            new Vector3(Context.CurrentShoulderTransform.position.x, Context.CharacterShoulderHight, Context.CurrentShoulderTransform.position.z));
+        
+        Vector3 rayDirection = Context.CurrentShoulderTransform.position - Context.ClosestPointOnColliderFromShoulder;
+        Vector3 normalizedRayDirection = rayDirection.normalized;
+        float offsetDistance = 0.05f;
+        Vector3 offset = normalizedRayDirection * offsetDistance;
+        
+        Vector3 offsetPosition = Context.ClosestPointOnColliderFromShoulder + offset;
+        Context.CurrentIkTargetTransform.position = offsetPosition;
+    }
 }
 

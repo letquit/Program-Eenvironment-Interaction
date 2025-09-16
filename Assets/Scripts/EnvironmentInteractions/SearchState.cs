@@ -22,18 +22,21 @@ public class SearchState : EnvironmentInteractionState
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Search;
+        return StateKey;
     }
 
     public override void OnTriggerEnter(Collider other)
     {
+        StartIkTargetPositionTracking(other);
     }
 
     public override void OnTriggerStay(Collider other)
     {
+        UpdateIkTargetPosition(other);
     }
 
     public override void OnTriggerExit(Collider other)
     {
+        ResetIkTargetPositionTracking(other);
     }
 }

@@ -42,7 +42,7 @@ public class StateManager<EState> : MonoBehaviour where EState : Enum
         // 如果需要状态转换，则执行状态转换
         else if (!IsTransitioningState)
         {
-            TransitionState(CurrentState.StateKey);
+            TransitionState(nextStateKey);
         }
     }
 
