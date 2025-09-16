@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class ResetState : EnvironmentInteractionState
+public class RiseState : EnvironmentInteractionState
 {
-    public ResetState(EnvironmentInteractionContext context,
+    public RiseState(EnvironmentInteractionContext context,
         EnvironmentInteractionStateMachine.EEnvironmentInteractionState estate) : base(context, estate)
     {
         EnvironmentInteractionContext Context = context;
@@ -10,7 +10,7 @@ public class ResetState : EnvironmentInteractionState
 
     public override void EnterState()
     {
-        Debug.Log("ENTERING RESET STATE");
+        
     }
 
     public override void ExitState()
@@ -21,12 +21,11 @@ public class ResetState : EnvironmentInteractionState
     public override void UpdateState()
     {
         
-        Debug.Log("UPDATING RESET STATE");
     }
 
     public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
     {
-        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Reset;
+        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Rise;
     }
 
     public override void OnTriggerEnter(Collider other)

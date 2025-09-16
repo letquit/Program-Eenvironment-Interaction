@@ -36,6 +36,8 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
         Reset,
     }
 
+    private EnvironmentInteractionContext _context;
+
     [SerializeField] private TwoBoneIKConstraint _leftIkConstraint;
     [SerializeField] private TwoBoneIKConstraint _rightIkConstraint;
     [SerializeField] private MultiRotationConstraint _leftMultiRotationConstraint;
@@ -52,6 +54,16 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
     private void Awake()
     {
         ValidateConstraints();
+        
+        _context = new EnvironmentInteractionContext(
+            _leftIkConstraint, 
+            _rightIkConstraint,
+            _leftMultiRotationConstraint, 
+            _rightMultiRotationConstraint,
+            _rigidbody, 
+            _rootCollider
+        );
+        InitializeStates();
     }
 
     /// <summary>
@@ -66,6 +78,20 @@ public class EnvironmentInteractionStateMachine : StateManager<EnvironmentIntera
         Assert.IsNotNull(_rightMultiRotationConstraint, "右多重旋转约束未分配。");
         Assert.IsNotNull(_rigidbody, "用于控制角色的刚体未分配。");
         Assert.IsNotNull(_rootCollider, "附加到角色的根碰撞体未分配。");
+    }
+
+    /// <summary>
+    /// 初始化状态字典，将各个环境交互状态添加到状态管理器中，并设置初始状态
+    /// </summary>
+    private void InitializeStates()
+    {
+        // 将状态添加到继承的 StateManager "States"字典并设置初始状态
+        States.Add(EEnvironmentInteractionState.Reset, new ResetState(_context, EEnvironmentInteractionState.Reset));
+        States.Add(EEnvironmentInteractionState.Search, new SearchState(_context, EEnvironmentInteractionState.Search));
+        States.Add(EEnvironmentInteractionState.Approach, new ApproachState(_context, EEnvironmentInteractionState.Approach));
+        States.Add(EEnvironmentInteractionState.Rise, new RiseState(_context, EEnvironmentInteractionState.Rise));
+        States.Add(EEnvironmentInteractionState.Touch, new TouchState(_context, EEnvironmentInteractionState.Touch));
+        CurrentState = States[EEnvironmentInteractionState.Reset];
     }
 }
 

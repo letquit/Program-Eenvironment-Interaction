@@ -1,16 +1,39 @@
 using UnityEngine;
 
-public class SearchState : MonoBehaviour
+public class SearchState : EnvironmentInteractionState
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public SearchState(EnvironmentInteractionContext context,
+        EnvironmentInteractionStateMachine.EEnvironmentInteractionState estate) : base(context, estate)
     {
-        
+        EnvironmentInteractionContext Context = context;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void EnterState()
     {
-        
+    }
+
+    public override void ExitState()
+    {
+    }
+
+    public override void UpdateState()
+    {
+    }
+
+    public override EnvironmentInteractionStateMachine.EEnvironmentInteractionState GetNextState()
+    {
+        return EnvironmentInteractionStateMachine.EEnvironmentInteractionState.Search;
+    }
+
+    public override void OnTriggerEnter(Collider other)
+    {
+    }
+
+    public override void OnTriggerStay(Collider other)
+    {
+    }
+
+    public override void OnTriggerExit(Collider other)
+    {
     }
 }

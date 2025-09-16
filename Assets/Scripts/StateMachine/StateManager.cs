@@ -12,8 +12,8 @@ using UnityEngine;
 /// <typeparam name="EState">状态枚举类型，必须继承自Enum</typeparam>
 public class StateManager<EState> : MonoBehaviour where EState : Enum
 {
-    private Dictionary<EState, BaseState<EState>> States = new Dictionary<EState, BaseState<EState>>();
-    private BaseState<EState> CurrentState;
+    protected Dictionary<EState, BaseState<EState>> States = new Dictionary<EState, BaseState<EState>>();
+    protected BaseState<EState> CurrentState;
 
     private bool IsTransitioningState = false;
 
